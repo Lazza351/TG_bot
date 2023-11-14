@@ -40,9 +40,10 @@
     #left_cont{
       text-align: center;
     }
-    .free-class{
+    .busy-class{
       background-color: pink;
     }
+    
 
   </style>
   <head>
@@ -55,7 +56,7 @@
       <p id = "calendar"></p>
     </div>
     <div id = "bot_cont">
-      <button>Test</button>
+      <p id = "tusa"> Никто не тусит в этот день </p>
     </div>
   </body>
   <script src = "https://telegram.org/js/telegram-web-app.js"></script>
@@ -64,19 +65,67 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
     tg.MainButton.show()
-    busy_dates = [[10,10,2023]]
+    let busy_dates = {}
+    persons = {"Nikita":
+                {
+                  "Nick": "@Esmainer",
+                  "busy_dates": [
+                    {
+                      "date": "10.10.2023",
+                      "time": "evening"
+                    },
+                    {
+                      "date": "11.10.2023",
+                      "time": "all day"
+                    }
+                  ]
+                },
+              "Ivan":
+                {
+                  "Nick": "@nohelpstill",
+                  "busy_dates": [
+                    {
+                      "date": "11.10.2023",
+                      "time": "evening"
+                    },
+                    {
+                      "date": "12.10.2023",
+                      "time": "all day"
+                    }
+                  ]
+                }
+              }
+    for (let person of Object.values(persons)) {
+      for (let date of Object.values(person["busy_dates"])) {
+        if (!isListInListOfLists(date["date"], Object.keys(busy_dates))){
+          busy_dates[date["date"]] = new Array(person["Nick"])
+        }
+        else {
+          busy_dates[date["date"]].push(person["Nick"])
+        }
+      }
+    }
+    console.log(busy_dates)
     let calendar = new AirDatepicker('#calendar', {
       onRenderCell({date, cellType}) {
         if (cellType === 'day') {
-            if (isListInListOfLists(Array.from([date.getDate(), date.getMonth(), date.getFullYear()]), busy_dates)) {
+            if (Object.keys(busy_dates).includes(`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`)) {
                 return {
                     disabled: false,
-                    classes: 'free-class',
+                    classes: 'busy-class',
                     attrs: {
-                        title: 'Cell is busy'
+                        title: `busy day`
                     }
                 }
             }
+        }
+    },
+      onSelect({date, formattedDate, datepicker}) {
+        if (Object.keys(busy_dates).includes(`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`)) {
+          document.getElementById('tusa').textContent = `${busy_dates[`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`]}`
+        }
+        else {
+          document.getElementById('tusa').textContent = "Никто не тусит в этот день"
         }
     }
     });
