@@ -32,6 +32,18 @@
     #usercard{
       text-align: center;
     }
+
+    #left_cont{
+      align-items: right;
+    }
+
+    #left_cont{
+      text-align: center;
+    }
+    .free-class{
+      background-color: pink;
+    }
+
   </style>
   <head>
     <meta charset="utf-8" />
@@ -39,14 +51,43 @@
     <title>Test Page</title>
   </head>
   <body>
-    <p id = "calendar"></p>
-    <button>Test</button>
+    <div id = "top_cont">
+      <p id = "calendar"></p>
+    </div>
+    <div id = "bot_cont">
+      <button>Test</button>
+    </div>
   </body>
   <script src = "https://telegram.org/js/telegram-web-app.js"></script>
   <script src = "datepicker/air-datepicker.js"></script>
   <script>
-    let tg = window.Telegram.WebApp
-    new AirDatepicker('#calendar');
+    let tg = window.Telegram.WebApp;
     tg.expand();
+    tg.MainButton.show()
+    busy_dates = [[10,10,2023]]
+    let calendar = new AirDatepicker('#calendar', {
+      onRenderCell({date, cellType}) {
+        if (cellType === 'day') {
+            if (isListInListOfLists(Array.from([date.getDate(), date.getMonth(), date.getFullYear()]), busy_dates)) {
+                return {
+                    disabled: false,
+                    classes: 'free-class',
+                    attrs: {
+                        title: 'Cell is busy'
+                    }
+                }
+            }
+        }
+    }
+    });
+
+    function isListInListOfLists(sublist, listOfLists) {
+      for (let i = 0; i < listOfLists.length; i++) {
+        if (JSON.stringify(listOfLists[i]) === JSON.stringify(sublist)) {
+          return true;
+        }
+      }
+      return false;
+    }
   </script>
 </html>
