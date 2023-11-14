@@ -43,7 +43,9 @@
     .busy-class{
       background-color: pink;
     }
-    
+    #tusa{
+      color: white;
+    }
 
   </style>
   <head>
@@ -68,7 +70,7 @@
     let busy_dates = {}
     persons = {"Nikita":
                 {
-                  "Nick": "@Esmainer",
+                  "Nick": "Esmainer01",
                   "busy_dates": [
                     {
                       "date": "10.10.2023",
@@ -82,7 +84,7 @@
                 },
               "Ivan":
                 {
-                  "Nick": "@nohelpstill",
+                  "Nick": "nohelpstill",
                   "busy_dates": [
                     {
                       "date": "11.10.2023",
@@ -95,13 +97,13 @@
                   ]
                 }
               }
-    for (let person of Object.values(persons)) {
-      for (let date of Object.values(person["busy_dates"])) {
+    for (let person of Object.keys(persons)) {
+      for (let date of Object.values(persons[person]["busy_dates"])) {
         if (!isListInListOfLists(date["date"], Object.keys(busy_dates))){
-          busy_dates[date["date"]] = new Array(person["Nick"])
+          busy_dates[date["date"]] = new Array(person)
         }
         else {
-          busy_dates[date["date"]].push(person["Nick"])
+          busy_dates[date["date"]].push(person)
         }
       }
     }
@@ -122,13 +124,21 @@
     },
       onSelect({date, formattedDate, datepicker}) {
         if (Object.keys(busy_dates).includes(`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`)) {
-          document.getElementById('tusa').textContent = `${busy_dates[`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`]}`
+          document.getElementById('tusa').innerHTML = constructStringTusi(busy_dates[`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`])
         }
         else {
           document.getElementById('tusa').textContent = "Никто не тусит в этот день"
         }
     }
     });
+
+    function constructStringTusi(elements) {
+      let output = ``
+      for (let i = 0; i < elements.length; i++){
+        output += `<a href = 'https://t.me/${persons[elements[i]]["Nick"]}'>${elements[i]}</a>\n`
+      }
+      return output
+    }
 
     function isListInListOfLists(sublist, listOfLists) {
       for (let i = 0; i < listOfLists.length; i++) {
