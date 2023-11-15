@@ -26,17 +26,20 @@
       font-size: 18px;
     }
 
+    .bot_cont{
+      display: inline-block;
+      text-align: center;
+    }
+
     .button:not(:last-child){
       margin-bottom: 20px
     }
 
     #left_cont{
       align-items: right;
-    }
-
-    #left_cont{
       text-align: center;
     }
+
     .busy-class{
       background-color: pink;
       color: rgb(251, 81, 110);
@@ -48,6 +51,11 @@
     ul{
         list-style-type: none;
         position: relative;
+        display: block;
+    }
+
+    .uli{
+      padding-inline-start: 0px;
     }
 
     li{
@@ -61,7 +69,8 @@
         width: 120px;
         height: 47px;
         margin-top: 10px;
-        margin-right: 10px;
+        margin-inline: 10px;
+        
     }
 
     #tag-name{
@@ -74,6 +83,7 @@
         display: inline-block;
     }
     #tag-day_time{
+        float: left;
         position: relative;
         margin-left: 5px;
         display: inline-block;
@@ -86,12 +96,11 @@
     <title>Test Page</title>
   </head>
   <body>
-    <div id = "top_cont">
+    <div class = "top_cont">
       <p id = "calendar"></p>
     </div>
-    <div id = "bot_cont">
+    <div class = "bot_cont">
       <div id = "tusa">
-
       </div>
     </div>
   </body>
@@ -121,7 +130,7 @@
                   "tg_nn": "nohelpstill",
                   "busy_dates": {
                     "11.10.2023": {
-                        "tags": "💃",
+                        "tags": "💃🍺",
                         "time": "🌆"
                       },
                       "12.10.2023": {
@@ -186,6 +195,7 @@
 
     function constructStringTusi(elements, date) {
       var tusa = document.createElement("ul")
+      tusa.className = "uli"
       for (let i = 0; i < elements.length; i++){
         var x = document.createElement("li")
         x.innerHTML = `<div id = "tag-name"><a href = 'https://t.me/${persons[elements[i]]["tg_nn"]}'>${elements[i]}</a></div>
