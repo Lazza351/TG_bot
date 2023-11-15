@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <style>
+    
     body{
       color: var(--tg-theme-text-color);
       background: var(--tg-theme-bg-color);
@@ -29,10 +30,6 @@
       margin-bottom: 20px
     }
 
-    #usercard{
-      text-align: center;
-    }
-
     #left_cont{
       align-items: right;
     }
@@ -42,9 +39,44 @@
     }
     .busy-class{
       background-color: pink;
+      color: rgb(251, 81, 110);
     }
     #tusa{
       color: gray;
+    }
+
+    ul{
+        list-style-type: none;
+        position: relative;
+    }
+
+    li{
+        display: inline-block;
+        background-color: rgb(213, 255, 150);
+        color: rgb(10, 122, 8);
+        border-color: green;
+        border-radius: 4px;
+        border-width: 4px;
+        border-style:dotted;
+        width: 120px;
+        height: 47px;
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    #tag-name{
+        margin-left: 5px;
+    }
+    #tag-icons{
+        float: right;
+        position: relative;
+        margin-right: 5px;
+        display: inline-block;
+    }
+    #tag-day_time{
+        position: relative;
+        margin-left: 5px;
+        display: inline-block;
     }
 
   </style>
@@ -58,7 +90,9 @@
       <p id = "calendar"></p>
     </div>
     <div id = "bot_cont">
-      <p id = "tusa"> Никто не тусит в этот день </p>
+      <div id = "tusa">
+
+      </div>
     </div>
   </body>
   <script src = "https://telegram.org/js/telegram-web-app.js"></script>
@@ -70,40 +104,54 @@
     let busy_dates = {}
     persons = {"Nikita":
                 {
-                  "Nick": "Esmainer01",
-                  "busy_dates": [
-                    {
-                      "date": "10.10.2023",
-                      "time": "evening"
+                  "tg_nn": "Esmainer01",
+                  "busy_dates": {
+                    "10.10.2023": {
+                        "tags": "🍺",
+                        "time": "🌆"
                     },
-                    {
-                      "date": "11.10.2023",
-                      "time": "all day"
-                    }
-                  ]
+                    "11.10.2023": {
+                      "tags": "🍖",
+                      "time": "🌅"
+                    },
+                  }
                 },
               "Ivan":
                 {
-                  "Nick": "nohelpstill",
-                  "busy_dates": [
-                    {
-                      "date": "11.10.2023",
-                      "time": "evening"
-                    },
-                    {
-                      "date": "12.10.2023",
-                      "time": "all day"
-                    }
-                  ]
+                  "tg_nn": "nohelpstill",
+                  "busy_dates": {
+                    "11.10.2023": {
+                        "tags": "💃",
+                        "time": "🌆"
+                      },
+                      "12.10.2023": {
+                        "tags": "🍺",
+                        "time": "🌅"
+                      },
+                  }
+                },
+                "Lizza":
+                {
+                  "tg_nn": "nohelpstill",
+                  "busy_dates": {
+                    "11.10.2023": {
+                        "tags": "🍺",
+                        "time": "🌆"
+                      },
+                      "12.10.2023": {
+                        "tags": "💃",
+                        "time": "🌅"
+                      },
+                  }
                 }
               }
     for (let person of Object.keys(persons)) {
-      for (let date of Object.values(persons[person]["busy_dates"])) {
-        if (!isListInListOfLists(date["date"], Object.keys(busy_dates))){
-          busy_dates[date["date"]] = new Array(person)
+      for (let date of Object.keys(persons[person]["busy_dates"])) {
+        if (!isListInListOfLists(date, Object.keys(busy_dates))){
+          busy_dates[date] = new Array(person)
         }
         else {
-          busy_dates[date["date"]].push(person)
+          busy_dates[date].push(person)
         }
       }
     }
@@ -124,20 +172,28 @@
     },
       onSelect({date, formattedDate, datepicker}) {
         if (Object.keys(busy_dates).includes(`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`)) {
-          document.getElementById('tusa').innerHTML = constructStringTusi(busy_dates[`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`])
+          document.getElementById('tusa').innerHTML = "";
+          document.getElementById('tusa').appendChild(constructStringTusi(busy_dates[`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`], `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`));
         }
         else {
-          document.getElementById('tusa').textContent = "Никто не собирается тусить в этот день"
+          document.getElementById('tusa').innerHTML = ""
+          var x = document.createElement("p")
+          x.textContent = "Никто на тусу"
+          document.getElementById('tusa').appendChild(x);
         }
     }
     });
 
-    function constructStringTusi(elements) {
-      let output = ``
+    function constructStringTusi(elements, date) {
+      var tusa = document.createElement("ul")
       for (let i = 0; i < elements.length; i++){
-        output += `<a href = 'https://t.me/${persons[elements[i]]["Nick"]}'>${elements[i]}</a>\n`
+        var x = document.createElement("li")
+        x.innerHTML = `<div id = "tag-name"><a href = 'https://t.me/${persons[elements[i]]["tg_nn"]}'>${elements[i]}</a></div>
+        <div id = "tag-day_time">${persons[elements[i]]["busy_dates"][date]["time"]}</div>
+        <div id = "tag-icons">${persons[elements[i]]["busy_dates"][date]["tags"]}</div>`
+        tusa.appendChild(x)
       }
-      return output
+      return tusa
     }
 
     function isListInListOfLists(sublist, listOfLists) {
